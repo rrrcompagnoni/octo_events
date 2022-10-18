@@ -28,6 +28,14 @@ RSpec.describe 'Issues::Events', type: :request do
   end
 
   describe 'GET /issues/:issue_number/events' do
+    before(:all) do
+      user = BasicAuthHelper.user
+      password = BasicAuthHelper.password
+      encoded = Base64.encode64("#{user}:#{password}")
+
+      @basic_auth_headers = { "Authorization" => "Basic #{encoded}" }
+    end
+
     it 'returns the list of events of an issue' do
       issue_number = 1
 
@@ -45,7 +53,7 @@ RSpec.describe 'Issues::Events', type: :request do
         action: 'edited'
       )
 
-      get "/issues/#{issue_number}/events"
+      get "/issues/#{issue_number}/events", headers: @basic_auth_headers
 
       expect(response).to have_http_status(200)
 
@@ -56,7 +64,7 @@ RSpec.describe 'Issues::Events', type: :request do
     end
 
     it 'returns an empty collection when issue is not found' do
-      get "/issues/2/events"
+      get "/issues/2/events", headers: @basic_auth_headers
 
       expect(response).to have_http_status(200)
       expect(JSON.parse(response.body)).to eq([])
@@ -79,7 +87,7 @@ RSpec.describe 'Issues::Events', type: :request do
         action: 'edited'
       )
 
-      get "/issues/#{issue_number}/events?page[number]=1&page[size]=1"
+      get "/issues/#{issue_number}/events?page[number]=1&page[size]=1", headers: @basic_auth_headers
 
       json_response = JSON.parse(response.body)
 
@@ -88,7 +96,7 @@ RSpec.describe 'Issues::Events', type: :request do
       expect(json_response.size).to eq(1)
       expect(edited_event['id']).to eq(event_2.id)
 
-      get "/issues/#{issue_number}/events?page[number]=2&page[size]=1"
+      get "/issues/#{issue_number}/events?page[number]=2&page[size]=1", headers: @basic_auth_headers
 
       json_response = JSON.parse(response.body)
 

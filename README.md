@@ -35,6 +35,9 @@ Note: You must set the same secret on GitHub webhooks secret config.
 
 ## Listing events
 
-`curl --location -g --request GET 'http://localhost:3000/issues/{ISSUE_NUMBER}/events?page[size]=1&page[number]=1'`
+```sh
+  curl --location -g --request GET 'http://localhost:3000/issues/{ISSUE_ID}/events?page[size]=1&page[number]=1' \
+  --header 'Authorization: Basic eHh4Onh4eA=='
+```
 
 The page param is optional.

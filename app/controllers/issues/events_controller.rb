@@ -1,7 +1,10 @@
 class Issues::EventsController < ApplicationController
   include WebhookAuthHelper
+  include ActionController::HttpAuthentication::Basic::ControllerMethods
 
   before_action :maybe_authorize_request, only: [:create]
+
+  http_basic_authenticate_with name: BasicAuthHelper.user, password: BasicAuthHelper.password, except: :create
 
   def create
     Issues.process_event!(permitted_params(params))
