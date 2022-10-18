@@ -22,3 +22,19 @@ Requirements:
 You may want to run the tests: `docker-compose run octo_events rspec`
 
 Note: You must set the same secret on GitHub webhooks secret config.
+
+## Configure a Webwook
+
+- Follow GitHub instructions <https://docs.github.com/en/developers/webhooks-and-events/webhooks/creating-webhooks>.
+- Set the Webhook URL on GitHub: `{TUNNEL_HOST}/issues/events`.
+- Set the content type to `application/json`.
+- Set the secret you have generated before.
+- Select the individual events `issues` and `issue_comments`.
+- Set active.
+- Start creating a few issues :)
+
+## Listing events
+
+`curl --location -g --request GET 'http://localhost:3000/issues/{ISSUE_NUMBER}/events?page[size]=1&page[number]=1'`
+
+The page param is optional.
