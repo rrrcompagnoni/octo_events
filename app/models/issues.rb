@@ -20,6 +20,14 @@ module Issues
     )
   end
 
+  def self.list_events(issue_number, page = {})
+    Event
+      .where(issue_number: issue_number)
+      .order(happened_at: :desc)
+      .page(page.fetch(:number, '1'))
+      .per(page.fetch(:size, '20'))
+  end
+
   def self.table_name_prefix
     "issue_"
   end

@@ -43,4 +43,46 @@ RSpec.describe 'Issues', type: :model do
       })
     end
   end
+
+  describe '.list_events' do
+    it 'returns an empty list when there are no events for an issue' do
+      expect(Issues.list_events('1')).to eq([])
+    end
+
+    it 'returns an ordered array by the most recent event first' do
+      event_1 = Issues::Event.create!(
+        issue: {'url' => 'foo'},
+        happened_at: DateTime.current,
+        issue_number: '1',
+        action: 'created'
+      )
+
+      event_2 = Issues::Event.create!(
+        issue: {'url' => 'foo'},
+        happened_at: DateTime.current,
+        issue_number: '1',
+        action: 'edited'
+      )
+
+      # edited event is the most recent
+      edited_event, created_event = Issues.list_events('1')
+
+      expect(edited_event.id).to eq(event_2.id)
+      expect(created_event.id).to eq(event_1.id)
+    end
+
+    it 'has a default pagination' do
+      events = Issues.list_events('1')
+
+      expect(events.current_page).to eq(1)
+      expect(events.limit_value).to eq(20)
+    end
+
+    it 'overrides the default pagination when given' do
+      events = Issues.list_events('1', {number: 2, size: 1})
+
+      expect(events.current_page).to eq(2)
+      expect(events.limit_value).to eq(1)
+    end
+  end
 end

@@ -66,11 +66,16 @@ GEM
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
       tzinfo (~> 2.0)
+    api-pagination (5.0.0)
     bootsnap (1.13.0)
       msgpack (~> 1.2)
     builder (3.2.4)
     concurrent-ruby (1.1.10)
     crass (1.0.6)
+    database_cleaner-active_record (2.0.1)
+      activerecord (>= 5.a)
+      database_cleaner-core (~> 2.0.0)
+    database_cleaner-core (2.0.1)
     debug (1.6.2)
       irb (>= 1.3.6)
       reline (>= 0.3.1)
@@ -83,6 +88,18 @@ GEM
     io-console (0.5.11)
     irb (1.4.2)
       reline (>= 0.3.0)
+    kaminari (1.2.2)
+      activesupport (>= 4.1.0)
+      kaminari-actionview (= 1.2.2)
+      kaminari-activerecord (= 1.2.2)
+      kaminari-core (= 1.2.2)
+    kaminari-actionview (1.2.2)
+      actionview
+      kaminari-core (= 1.2.2)
+    kaminari-activerecord (1.2.2)
+      activerecord
+      kaminari-core (= 1.2.2)
+    kaminari-core (1.2.2)
     loofah (2.19.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -172,8 +189,11 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
+  api-pagination (~> 5.0)
   bootsnap
+  database_cleaner-active_record (~> 2.0)
   debug
+  kaminari (~> 1.2)
   pg (~> 1.1)
   puma (~> 5.0)
   rack-cors (~> 1.1)

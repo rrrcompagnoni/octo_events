@@ -1,12 +1,20 @@
 class Issues::EventsController < ApplicationController
   include WebhookAuthHelper
 
-  before_action :maybe_authorize_request
+  before_action :maybe_authorize_request, only: [:create]
 
   def create
     Issues.process_event!(permitted_params(params))
 
     render status: 202
+  end
+
+  def index
+    allowed_params = params.permit(:issue_number, page: [:number, :size]).to_h
+
+    events = Issues.list_events(allowed_params.fetch(:issue_number), allowed_params.fetch(:page, {}))
+
+    paginate json: events, page: events.current_page, per_page: events.limit_value
   end
 
   private

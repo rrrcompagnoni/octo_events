@@ -26,4 +26,76 @@ RSpec.describe 'Issues::Events', type: :request do
       expect(response).to have_http_status(403)
     end
   end
+
+  describe 'GET /issues/:issue_number/events' do
+    it 'returns the list of events of an issue' do
+      issue_number = 1
+
+      event_1 = Issues::Event.create!(
+        issue: {'url' => 'foo'},
+        happened_at: DateTime.current,
+        issue_number: issue_number,
+        action: 'created'
+      )
+
+      event_2 = Issues::Event.create!(
+        issue: {'url' => 'foo'},
+        happened_at: DateTime.current,
+        issue_number: issue_number,
+        action: 'edited'
+      )
+
+      get "/issues/#{issue_number}/events"
+
+      expect(response).to have_http_status(200)
+
+      edited_event, created_event = JSON.parse(response.body)
+
+      expect(created_event['id']).to eq(event_1.id)
+      expect(edited_event['id']).to eq(event_2.id)
+    end
+
+    it 'returns an empty collection when issue is not found' do
+      get "/issues/2/events"
+
+      expect(response).to have_http_status(200)
+      expect(JSON.parse(response.body)).to eq([])
+    end
+
+    it 'overrides the default pagination params' do
+      issue_number = 1
+
+      event_1 = Issues::Event.create!(
+        issue: {'url' => 'foo'},
+        happened_at: DateTime.current,
+        issue_number: issue_number,
+        action: 'created'
+      )
+
+      event_2 = Issues::Event.create!(
+        issue: {'url' => 'foo'},
+        happened_at: DateTime.current,
+        issue_number: issue_number,
+        action: 'edited'
+      )
+
+      get "/issues/#{issue_number}/events?page[number]=1&page[size]=1"
+
+      json_response = JSON.parse(response.body)
+
+      edited_event, _ = json_response
+
+      expect(json_response.size).to eq(1)
+      expect(edited_event['id']).to eq(event_2.id)
+
+      get "/issues/#{issue_number}/events?page[number]=2&page[size]=1"
+
+      json_response = JSON.parse(response.body)
+
+      created_event, _ = json_response
+
+      expect(json_response.size).to eq(1)
+      expect(created_event['id']).to eq(event_1.id)
+    end
+  end
 end
