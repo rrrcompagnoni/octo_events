@@ -10,8 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 0) do
+ActiveRecord::Schema[7.0].define(version: 2022_10_17_213757) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "issue_events", force: :cascade do |t|
+    t.string "issue_number", null: false
+    t.string "action", null: false
+    t.jsonb "issue", null: false
+    t.datetime "happened_at", null: false
+    t.index ["issue_number"], name: "index_issue_events_on_issue_number"
+  end
+
+  create_table "issue_raw_events", force: :cascade do |t|
+    t.jsonb "payload", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
 end
